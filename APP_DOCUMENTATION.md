@@ -1,4 +1,4 @@
-# AI Research App Documentation
+# Synthesis Documentation
 
 ## 1. Overview
 The **AI Research App** is a comprehensive platform designed to assist researchers in generating, managing, and analyzing research papers using advanced AI agents. It automates the research workflow from document reading to paper writing, providing a streamlined interface for managing projects, analyzing data, and visualizing concepts.

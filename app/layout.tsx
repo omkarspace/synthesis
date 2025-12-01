@@ -21,8 +21,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Research Paper Generator",
-  description: "Multi-agent AI system for generating structured research papers",
+  title: "Synthesis",
+  description: "AI-powered research synthesis and paper generation platform",
 };
 
 import { ToastProvider } from "@/components/ui/toast";

@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Synthesis
 
-## Getting Started
+A powerful, AI-driven platform for automating research workflows, generating comprehensive papers, and analyzing complex documents. Built with Next.js 16, React 19, and Google's Gemini AI.
 
-First, run the development server:
+![AI Research App Dashboard](public/dashboard-preview.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🤖 Advanced AI Agent Pipeline
+- **Reader Agent**: Parses and understands complex research papers (PDF/DOCX).
+- **Summarizer Agent**: Extracts key insights and generates concise summaries.
+- **Graph Agent**: Builds a knowledge graph connecting concepts across documents.
+- **Hypothesis Agent**: Generates novel research hypotheses based on analyzed data.
+- **Experiment Agent**: Designs experiments to validate hypotheses.
+- **Writer Agent**: Synthesizes findings into full-length research papers.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### ⚡ Performance & Core Capabilities
+- **Streaming AI Responses**: Real-time token-by-token generation for immediate feedback.
+- **Vector Search (RAG)**: Semantic search across all your documents using Gemini embeddings.
+- **Chat with Research**: Ask questions about your documents and get cited answers.
+- **Rich Text Editor**: Full-featured inline editor (TipTap) for refining generated papers.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 📄 Comprehensive Export Options
+- **PDF**: Professional formatting for sharing.
+- **LaTeX**: Ready-to-compile `.tex` files for academic publishing.
+- **DOCX**: Microsoft Word compatible documents.
+- **Markdown**: Clean text format for blogs and documentation.
 
-## Learn More
+### 📊 Analytics & Visualization
+- **Concept Networks**: Interactive graphs showing relationships between ideas.
+- **Quality Metrics**: Real-time scoring of hypothesis novelty and feasibility.
+- **Citation Analysis**: Automatic extraction and tracking of references.
+- **Word Count Trends**: Visual tracking of paper evolution.
 
-To learn more about Next.js, take a look at the following resources:
+### 🛠️ Project Management
+- **Project Templates**: Pre-configured structures for Literature Reviews, Theses, Case Studies, and more.
+- **Version Control**: Track changes, view diffs, and rollback to previous versions.
+- **Smart Organization**: Tagging, archiving, and filtering capabilities.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Technology Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Frontend**: Next.js 16 (App Router), React 19, Tailwind CSS v4, Lucide Icons
+- **Backend**: Next.js API Routes, Prisma ORM, SQLite
+- **AI & ML**: Google Generative AI (Gemini), ChromaDB (Vector Store)
+- **Data Visualization**: Recharts, D3.js support
+- **Document Processing**: `pdf-parse`, `mammoth`, `jspdf`, `docx`
 
-## Deploy on Vercel
+## 🏁 Getting Started
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Prerequisites
+- Node.js 18+
+- Google Gemini API Key
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Installation
+
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/omkarspace/synthesis.git
+    cd ai-research-app
+    ```
+
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Set up environment variables**
+    Create a `.env` file in the root directory:
+    ```env
+    DATABASE_URL="file:./dev.db"
+    GEMINI_API_KEY="your_gemini_api_key_here"
+    ```
+
+4.  **Initialize the database**
+    ```bash
+    npx prisma generate
+    npx prisma db push
+    ```
+
+5.  **Run the development server**
+    ```bash
+    npm run dev
+    ```
+
+6.  **Open the app**
+    Visit `http://localhost:3000` in your browser.
+
+## 📖 Usage Guide
+
+### Creating a New Project
+1.  Click **"New Project"** on the dashboard.
+2.  Select a **Template** (e.g., Literature Review) or start from scratch.
+3.  Upload your research documents (PDF/DOCX).
+4.  Watch as the AI agents analyze, summarize, and generate your paper.
+
+### Interacting with Research
+- **Chat**: Use the "Ask Questions" tab to query your documents.
+- **Edit**: Switch to "Edit Mode" in the paper viewer to refine the content.
+- **Export**: Use the "Export Paper" dropdown to download in your preferred format.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License.
