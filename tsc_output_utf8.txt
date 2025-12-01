@@ -1,0 +1,15 @@
+﻿.next/dev/types/validator.ts(81,31): error TS2344: Type 'typeof import("C:/Users/omkar/OneDrive/Documents/New folder (5)/ai-research-app/app/api/projects/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/projects/[id]">'.
+  Types of property 'GET' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ [x: string]: { metadata: string | null; id: string; createdAt: Date; ... 5 more ...; extractedText: string | null; }[] | ... 6 more ... | { ...; }[]; [x: number]: never; [x: symbol]: never; }...' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/types/validator.ts(81,31): error TS2344: Type 'typeof import("C:/Users/omkar/OneDrive/Documents/New folder (5)/ai-research-app/app/api/projects/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/projects/[id]">'.
+  Types of property 'GET' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ [x: string]: { metadata: string | null; id: string; createdAt: Date; ... 5 more ...; extractedText: string | null; }[] | ... 6 more ... | { ...; }[]; [x: number]: never; [x: symbol]: never; }...' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+lib/file-processor.ts(1,8): error TS1192: Module '"C:/Users/omkar/OneDrive/Documents/New folder (5)/ai-research-app/node_modules/pdf-parse/dist/pdf-parse/esm/index"' has no default export.

@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  status      String   @default("idle") // idle, processing, completed, error
+  progress    Int      @default(0)
+  tags        String?  // Comma-separated tags
+  archived    Boolean  @default(false)
+  favorited   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  documents     Document[]
+  agentRuns     AgentRun[]
+  hypotheses    Hypothesis[]
+  conceptNodes  ConceptNode[]
+  outlines      Outline[]
+  presentations Presentation[]
+  statistics    Statistic[]
+  
+  @@index([status])
+  @@index([createdAt])
+  @@index([archived])
+  @@index([favorited])
+}
+
+model Document {
+  id          String   @id @default(uuid())
+  projectId   String
+  filename    String
+  filepath    String
+  filesize    Int
+  mimetype    String
+  extractedText String?
+  metadata    String? // JSON string
+  createdAt   DateTime @default(now())
+  
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@index([projectId])
+}
+
+model AgentRun {
+  id          String   @id @default(uuid())
+  projectId   String
+  agentName   String   // reader, summarizer, graph, hypothesis, experiment, writer
+  status      String   @default("pending") // pending, running, completed, error
+  input       String?  // JSON string
+  output      String?  // JSON string
+  error       String?
+  executionTime Float?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@index([projectId])
+  @@index([agentName])
+  @@index([status])
+}
+
+model Hypothesis {
+  id          String   @id @default(uuid())
+  projectId   String
+  title       String
+  description String
+  testability Int      // 0-100
+  novelty     Int      // 0-100
+  feasibility Int      // 0-100
+  category    String
+  createdAt   DateTime @default(now())
+  
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@index([projectId])
+}
+
+model ConceptNode {
+  id          String   @id @default(uuid())
+  projectId   String
+  label       String
+  importance  Int      // 0-100
+  cluster     Int
+  metadata    String?  // JSON string
+  createdAt   DateTime @default(now())
+  
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+model Outline {
+  id          String   @id @default(uuid())
+  projectId   String
+  title       String
+  abstract    String
+  sections    String   // JSON array of sections
+  createdAt   DateTime @default(now())
+  
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@index([projectId])
+}
+
+model Presentation {
+  id        String   @id @default(uuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title     String
+  slides    String // JSON string of SlideData[]
+  createdAt DateTime @default(now())
+}
+
+model Statistic {
+  id        String   @id @default(uuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  category  String
+  label     String
+  value     Float
+  unit      String?
+  context   String
+  createdAt DateTime @default(now())
+  
+  @@index([projectId])
+}
