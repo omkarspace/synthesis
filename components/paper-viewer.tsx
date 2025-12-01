@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MathRenderer } from './math-renderer';
+import { RichTextEditor } from './rich-text-editor';
 import { Button } from './ui/button';
-import { Download, FileText } from 'lucide-react';
+import { Download, FileText, Edit, Eye } from 'lucide-react';
 
 interface PaperViewerProps {
     paper: {
@@ -20,11 +21,31 @@ interface PaperViewerProps {
         references?: string[];
     };
     onDownload?: () => void;
+    onSave?: (content: string) => Promise<void>;
+    editable?: boolean;
 }
 
-export const PaperViewer: React.FC<PaperViewerProps> = ({ paper, onDownload }) => {
+export const PaperViewer: React.FC<PaperViewerProps> = ({ paper, onDownload, onSave, editable = false }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
     // Use fullText if available, otherwise compile from sections
     const content = paper.fullText || compileFromSections(paper);
+
+    const handleSave = async (newContent: string) => {
+        if (!onSave) return;
+
+        setIsSaving(true);
+        try {
+            await onSave(newContent);
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Failed to save:', error);
+            alert('Failed to save changes');
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     return (
         <Card className="animate-fadeIn">
@@ -34,16 +55,47 @@ export const PaperViewer: React.FC<PaperViewerProps> = ({ paper, onDownload }) =
                         <FileText className="w-6 h-6 text-primary" />
                         <CardTitle className="text-2xl">{paper.title}</CardTitle>
                     </div>
-                    {onDownload && (
-                        <Button variant="outline" onClick={onDownload}>
-                            <Download className="w-4 h-4 mr-2" />
-                            Download PDF
-                        </Button>
-                    )}
+                    <div className="flex gap-2">
+                        {editable && (
+                            <Button
+                                variant={isEditing ? "default" : "outline"}
+                                onClick={() => setIsEditing(!isEditing)}
+                                className="gap-2"
+                            >
+                                {isEditing ? (
+                                    <>
+                                        <Eye className="w-4 h-4" />
+                                        Preview
+                                    </>
+                                ) : (
+                                    <>
+                                        <Edit className="w-4 h-4" />
+                                        Edit
+                                    </>
+                                )}
+                            </Button>
+                        )}
+                        {onDownload && (
+                            <Button variant="outline" onClick={onDownload} className="gap-2">
+                                <Download className="w-4 h-4" />
+                                Download PDF
+                            </Button>
+                        )}
+                    </div>
                 </div>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
-                <MathRenderer content={content} className="space-y-6" />
+            <CardContent>
+                {isEditing ? (
+                    <RichTextEditor
+                        content={content}
+                        onSave={handleSave}
+                        editable={true}
+                    />
+                ) : (
+                    <div className="prose prose-sm max-w-none dark:prose-invert">
+                        <MathRenderer content={content} className="space-y-6" />
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

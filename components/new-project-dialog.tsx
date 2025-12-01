@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Upload, FileText, CheckCircle2, Loader2, X, FileType } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/toast';
+import { projectTemplates } from '@/lib/project-templates';
 
 interface NewProjectDialogProps {
   open: boolean;
@@ -30,6 +31,7 @@ export function NewProjectDialog({ open, onOpenChange, onProjectCreated }: NewPr
   const [isCreating, setIsCreating] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [currentStep, setCurrentStep] = useState<number>(-1);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
@@ -238,6 +240,36 @@ export function NewProjectDialog({ open, onOpenChange, onProjectCreated }: NewPr
                   rows={2}
                   className="w-full px-3 py-2 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring resize-none transition-all"
                 />
+              </div>
+
+              {/* Template Selector */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Project Template (Optional)
+                </label>
+                <select
+                  value={selectedTemplate}
+                  onChange={(e) => {
+                    setSelectedTemplate(e.target.value);
+                    const template = projectTemplates.find(t => t.id === e.target.value);
+                    if (template) {
+                      setDescription(template.description);
+                    }
+                  }}
+                  className="w-full px-3 py-2 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                >
+                  <option value="">Choose a template...</option>
+                  {projectTemplates.map(template => (
+                    <option key={template.id} value={template.id}>
+                      {template.icon} {template.name}
+                    </option>
+                  ))}
+                </select>
+                {selectedTemplate && (
+                  <p className="text-xs text-muted-foreground">
+                    {projectTemplates.find(t => t.id === selectedTemplate)?.description}
+                  </p>
+                )}
               </div>
 
               {/* Drag & Drop File Upload */}

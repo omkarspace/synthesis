@@ -62,6 +62,8 @@ export default function Home() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedProjectData, setSelectedProjectData] = useState<any>(null);
   const [dashboardView, setDashboardView] = useState<'list' | 'details'>('list');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState<string>('all');
 
   // Fetch selected project details with polling
   useEffect(() => {
@@ -248,13 +250,22 @@ export default function Home() {
               <input
                 type="text"
                 placeholder="Search projects..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
-            <Button variant="outline" className="gap-2">
-              <Filter className="w-4 h-4" />
-              Filter
-            </Button>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="px-4 py-2 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="all">All Status</option>
+              <option value="idle">Idle</option>
+              <option value="processing">Processing</option>
+              <option value="completed">Completed</option>
+              <option value="error">Error</option>
+            </select>
           </div>
         </CardContent>
       </Card>
@@ -287,69 +298,93 @@ export default function Home() {
           </Card>
         )}
 
-        {!loading && !error && projects.map((project, index) => {
-          const displayProject = {
-            id: project.id,
-            title: project.name,
-            description: project.description || '',
-            status: project.status as any,
-            lastUpdated: new Date(project.updatedAt),
-            documentCount: project._count?.documents || 0,
-            progress: project.progress,
-          };
+        {!loading && !error && projects
+          .filter(project => {
+            // Search filter
+            if (searchQuery && !project.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+              !project.description?.toLowerCase().includes(searchQuery.toLowerCase())) {
+              return false;
+            }
+            // Status filter
+            if (filterStatus !== 'all' && project.status !== filterStatus) {
+              return false;
+            }
+            return true;
+          })
+          .map((project, index) => {
+            const displayProject = {
+              id: project.id,
+              title: project.name,
+              description: project.description || '',
+              status: project.status as any,
+              lastUpdated: new Date(project.updatedAt),
+              documentCount: project._count?.documents || 0,
+              progress: project.progress,
+            };
 
-          return (
-            <Card key={project.id} className="hover-lift transition-smooth animate-slideIn" style={{ animationDelay: `${index * 0.1}s` }}>
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-semibold">{displayProject.title}</h3>
-                      <Badge variant={displayProject.status === 'completed' ? 'default' : displayProject.status === 'processing' ? 'secondary' : 'outline'}>
-                        {displayProject.status}
-                      </Badge>
+            return (
+              <Card key={project.id} className="hover-lift transition-smooth animate-slideIn" style={{ animationDelay: `${index * 0.1}s` }}>
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-xl font-semibold">{displayProject.title}</h3>
+                        <Badge variant={displayProject.status === 'completed' ? 'default' : displayProject.status === 'processing' ? 'secondary' : 'outline'}>
+                          {displayProject.status}
+                        </Badge>
+                      </div>
+                      <p className="text-muted-foreground mb-4">{displayProject.description}</p>
+
+                      <div className="grid grid-cols-3 gap-4 mb-4">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Clock className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-mono">{displayProject.lastUpdated.toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <FolderOpen className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-mono">{displayProject.documentCount} documents</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-mono">{displayProject.progress}% complete</span>
+                        </div>
+                      </div>
+
+                      <Progress value={displayProject.progress} className="h-2" />
                     </div>
-                    <p className="text-muted-foreground mb-4">{displayProject.description}</p>
 
-                    <div className="grid grid-cols-3 gap-4 mb-4">
-                      <div className="flex items-center gap-2 text-sm">
-                        <Clock className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-mono">{displayProject.lastUpdated.toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <FolderOpen className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-mono">{displayProject.documentCount} documents</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-mono">{displayProject.progress}% complete</span>
-                      </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm">
+                        <Download className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={async () => {
+                        try {
+                          await fetch(`/api/projects/${project.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ archived: true })
+                          });
+                          refetch();
+                        } catch (error) {
+                          console.error('Failed to archive:', error);
+                        }
+                      }}>
+                        <Archive className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => {
+                        if (confirm('Are you sure you want to delete this project?')) {
+                          fetch(`/api/projects/${project.id}`, { method: 'DELETE' })
+                            .then(() => refetch());
+                        }
+                      }}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
-
-                    <Progress value={displayProject.progress} className="h-2" />
                   </div>
-
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Download className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Archive className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => {
-                      if (confirm('Are you sure you want to delete this project?')) {
-                        fetch(`/api/projects/${project.id}`, { method: 'DELETE' })
-                          .then(() => refetch());
-                      }
-                    }}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
+                </CardContent>
+              </Card>
+            )
+          })}
       </div>
     </div>
   );
