@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -22,11 +22,7 @@ import { StatisticsViewer } from '@/components/statistics-viewer';
 import { ChatWithResearch } from '@/components/chat-with-research';
 import { ArrowLeft, RefreshCw, Download, FileText, Presentation, FileDown, ChevronDown } from 'lucide-react';
 import { generateThemedPPT } from '@/lib/ppt-generator';
-import {
-    mockQualityMetrics,
-    mockCitationData,
-    mockWordCountTrend,
-} from '@/lib/mock-data';
+import { calculateProjectMetrics, calculateWordCountTrend, extractCitations } from '@/lib/analytics-utils';
 
 interface ProjectDetailsViewProps {
     project: any;
@@ -36,6 +32,11 @@ interface ProjectDetailsViewProps {
 
 export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetailsViewProps) {
     const [activeTab, setActiveTab] = useState('overview');
+
+    // Calculate real metrics from project data
+    const qualityMetrics = useMemo(() => calculateProjectMetrics(project), [project]);
+    const wordCountTrend = useMemo(() => calculateWordCountTrend(project), [project]);
+    const citationData = useMemo(() => extractCitations(project), [project]);
 
     if (!project) return null;
 
@@ -182,7 +183,7 @@ export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetail
                                 <span className="w-1 h-8 bg-chart-4 rounded-full" />
                                 Quality Metrics
                             </h2>
-                            <QualityMetricsChart metrics={mockQualityMetrics} />
+                            <QualityMetricsChart metrics={qualityMetrics} />
                         </section>
 
                         <section>
@@ -190,7 +191,7 @@ export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetail
                                 <span className="w-1 h-8 bg-chart-5 rounded-full" />
                                 Citation Analysis
                             </h2>
-                            <CitationChart data={mockCitationData} />
+                            <CitationChart data={citationData} />
                         </section>
                     </div>
 
@@ -199,7 +200,7 @@ export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetail
                             <span className="w-1 h-8 bg-chart-1 rounded-full" />
                             Word Count Trend
                         </h2>
-                        <WordCountTrend data={mockWordCountTrend} />
+                        <WordCountTrend data={wordCountTrend} />
                     </section>
 
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
@@ -250,8 +251,8 @@ export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetail
                     <TopicClusterHeatmap />
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <QualityMetricsChart metrics={mockQualityMetrics} />
-                        <CitationChart data={mockCitationData} />
+                        <QualityMetricsChart metrics={qualityMetrics} />
+                        <CitationChart data={citationData} />
                     </div>
                 </TabsContent>
 

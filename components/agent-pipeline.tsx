@@ -19,8 +19,12 @@ const DEFAULT_AGENTS: Agent[] = [
     { id: 'summarizer', name: 'Summarizer Agent', status: 'pending' },
     { id: 'graph', name: 'Graph Agent', status: 'pending' },
     { id: 'hypothesis', name: 'Hypothesis Agent', status: 'pending' },
+    { id: 'outliner', name: 'Outliner Agent', status: 'pending' },
+    { id: 'statistics', name: 'Statistics Agent', status: 'pending' },
     { id: 'experiment', name: 'Experiment Agent', status: 'pending' },
     { id: 'writer', name: 'Paper Writer Agent', status: 'pending' },
+    { id: 'reviewer', name: 'Reviewer Agent', status: 'pending' },
+    { id: 'presenter', name: 'Presenter Agent', status: 'pending' },
 ];
 
 export function AgentPipeline({ status, progress, agentRuns, agents: propAgents }: AgentPipelineProps) {

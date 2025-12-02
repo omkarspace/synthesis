@@ -20,14 +20,6 @@ import { Progress } from '@/components/ui/progress';
 import { useProjects } from '@/hooks/use-projects';
 import { useAnalytics } from '@/hooks/use-analytics';
 import {
-  mockAgents,
-  mockQualityMetrics,
-  mockCitationData,
-  mockWordCountTrend,
-  mockConceptNodes,
-  mockHypotheses
-} from '@/lib/mock-data';
-import {
   Sparkles,
   FolderOpen,
   BarChart3,
