@@ -182,6 +182,7 @@ export class AgentOrchestrator {
             return { success: true, paper };
         } catch (error) {
             console.error('Pipeline Error:', error);
+            const errorMessage = error instanceof Error ? error.message : String(error);
             await prisma.project.update({
                 where: { id: projectId },
                 data: { status: 'error' },

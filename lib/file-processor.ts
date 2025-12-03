@@ -28,7 +28,7 @@ export class FileProcessor {
 
             // Use require for pdf-parse as it's a CommonJS module
             const pdfParse = require('pdf-parse');
-            const data = await pdfParse(dataBuffer);
+            const data = await pdfParse.default(dataBuffer);
 
             return {
                 text: data.text,

@@ -12,8 +12,14 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        console.log(`[Agent Pipeline] Starting for project: ${projectId}`);
+
         // Run agent pipeline asynchronously
-        orchestrator.runPipeline(projectId).catch(console.error);
+        orchestrator.runPipeline(projectId)
+            .then(() => console.log(`[Agent Pipeline] Completed for project: ${projectId}`))
+            .catch(error => {
+                console.error(`[Agent Pipeline] Failed for project: ${projectId}`, error);
+            });
 
         return NextResponse.json({
             success: true,

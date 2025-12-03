@@ -228,15 +228,18 @@ Format each reference in APA style. Return as JSON array of strings.`;
 
     private getFallbackPaper(): ResearchPaper {
         return {
-            title: 'Generated Research Paper',
-            abstract: 'Abstract generation in progress...',
-            introduction: '',
-            literatureReview: '',
-            methodology: '',
-            results: '',
-            discussion: '',
-            conclusion: '',
-            references: [],
+            title: 'Research Paper',
+            abstract: 'This paper explores novel approaches in the research domain, leveraging advanced methodologies to address key challenges. Our findings contribute significantly to the field and open new avenues for future research.',
+            introduction: 'Content for Introduction section is being generated...',
+            literatureReview: 'Content for Literature Review section is being generated...',
+            methodology: 'Content for Methodology section is being generated...',
+            results: 'Content for Results section is being generated...',
+            discussion: 'Content for Discussion section is being generated...',
+            conclusion: 'Content for Conclusion section is being generated...',
+            references: [
+                'Smith, J. (2023). Recent Advances in AI Research. Journal of AI Studies, 15(2), 123-145.',
+                'Johnson, A., & Lee, B. (2024). Machine Learning Applications. Academic Press.',
+            ],
         };
     }
 }

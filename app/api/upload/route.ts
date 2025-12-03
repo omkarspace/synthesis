@@ -3,6 +3,7 @@ import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import { prisma } from '@/lib/prisma';
 import { fileProcessor } from '@/lib/file-processor';
+import { vectorStore } from '@/lib/vector-store';
 
 export async function POST(request: NextRequest) {
     try {
@@ -41,6 +42,29 @@ export async function POST(request: NextRequest) {
                 metadata: JSON.stringify(extracted.metadata),
             },
         });
+
+        // Index the uploaded document into the in-memory vector store in background
+        (async () => {
+            try {
+                const chunks = vectorStore.chunkText(extracted.text || '');
+                await Promise.all(
+                    chunks.map((chunk, i) =>
+                        vectorStore.addDocument({
+                            id: `${document.id}-chunk-${i}`,
+                            content: chunk,
+                            metadata: {
+                                projectId,
+                                documentId: document.id,
+                                type: 'paragraph',
+                                title: file.name,
+                            },
+                        })
+                    )
+                );
+            } catch (err) {
+                console.error('Background indexing error:', err);
+            }
+        })();
 
         return NextResponse.json(document, { status: 201 });
     } catch (error) {

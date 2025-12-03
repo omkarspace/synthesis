@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { searchProject } from '@/lib/vector-store';
 import { geminiClient } from '@/lib/gemini-client';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
     try {
@@ -16,10 +17,30 @@ export async function POST(request: NextRequest) {
         // Search for relevant context using vector search
         const searchResults = await searchProject(projectId, query, 3);
 
-        // Build context from search results
-        const context = searchResults
+        // Build context from search results. If none found, fall back to recent agent run outputs.
+        let context = searchResults
             .map((result, idx) => `[Source ${idx + 1}]: ${result.content}`)
             .join('\n\n');
+
+        if (!context || context.trim().length === 0) {
+            try {
+                const agentRuns = await prisma.agentRun.findMany({
+                    where: { projectId, status: 'completed' },
+                    orderBy: { createdAt: 'desc' },
+                    take: 6,
+                });
+
+                const runsContext = agentRuns
+                    .map((run, idx) => `[Agent ${run.agentName} ${idx + 1}]: ${run.output || ''}`)
+                    .join('\n\n');
+
+                if (runsContext.trim()) {
+                    context = `Agent outputs (fallback):\n${runsContext}`;
+                }
+            } catch (err) {
+                console.error('Failed to fetch agent runs for chat fallback:', err);
+            }
+        }
 
         // Build conversation history
         const history = conversationHistory
@@ -40,6 +61,9 @@ ${history ? `Previous conversation:\n${history}\n` : ''}
 User question: ${query}
 
 Please provide a helpful, accurate answer based on the context above. If you reference specific information, mention which source it came from.`;
+
+        // Debug: log the prompt sent to Gemini to help trace empty-context issues
+        console.log('Chat prompt:', prompt);
 
         // Generate response
         const response = await geminiClient.generateText(prompt);

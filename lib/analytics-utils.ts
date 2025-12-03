@@ -16,7 +16,7 @@ export interface ChartData {
 }
 
 export function calculateProjectMetrics(project: any): QualityMetrics {
-    if (!project || !project.hypotheses || project.hypotheses.length === 0) {
+    if (!project || !Array.isArray(project.hypotheses) || project.hypotheses.length === 0) {
         return {
             novelty: 0,
             cohesion: 0,
@@ -30,9 +30,11 @@ export function calculateProjectMetrics(project: any): QualityMetrics {
     let totalTestability = 0;
 
     project.hypotheses.forEach((h: any) => {
-        totalNovelty += h.novelty || 0;
-        totalFeasibility += h.feasibility || 0;
-        totalTestability += h.testability || 0;
+        if (h) {
+            totalNovelty += h.novelty || 0;
+            totalFeasibility += h.feasibility || 0;
+            totalTestability += h.testability || 0;
+        }
     });
 
     const count = project.hypotheses.length;
@@ -46,7 +48,7 @@ export function calculateProjectMetrics(project: any): QualityMetrics {
 }
 
 export function calculateWordCountTrend(project: any): ChartData[] {
-    if (!project || !project.documents) return [];
+    if (!project || !Array.isArray(project.documents)) return [];
 
     // Group by date (simplified to just show documents as data points for now, or cumulative)
     // A better approach for a single project is to show growth over time based on document uploads
@@ -59,26 +61,28 @@ export function calculateWordCountTrend(project: any): ChartData[] {
 
     // 1. Initial documents
     project.documents.forEach((doc: any) => {
-        const date = new Date(doc.createdAt).toLocaleDateString();
-        const words = Math.round(doc.filesize / 1024 * 150); // Estimate
-        trend.push({ name: 'Upload', words, date: doc.createdAt });
+        if (doc && doc.createdAt) {
+            const date = new Date(doc.createdAt).toLocaleDateString();
+            const words = Math.round((doc.filesize || 0) / 1024 * 150); // Estimate
+            trend.push({ name: 'Upload', words, date: doc.createdAt });
+        }
     });
 
     // 2. Agent outputs (Reader, Summarizer, Writer)
-    if (project.agentRuns) {
+    if (project.agentRuns && Array.isArray(project.agentRuns)) {
         project.agentRuns.forEach((run: any) => {
-            if (run.status === 'completed' && run.output) {
+            if (run && run.status === 'completed' && run.output) {
                 let words = 0;
                 try {
                     const output = JSON.parse(run.output);
-                    if (run.agentName === 'writer' && output.fullText) {
+                    if (run.agentName === 'writer' && output && output.fullText) {
                         words = output.fullText.split(/\s+/).length;
-                    } else if (run.agentName === 'summarizer') {
+                    } else if (run.agentName === 'summarizer' && output) {
                         // Summary length
                         words = JSON.stringify(output).split(/\s+/).length;
                     }
 
-                    if (words > 0) {
+                    if (words > 0 && run.completedAt) {
                         trend.push({
                             name: run.agentName.charAt(0).toUpperCase() + run.agentName.slice(1),
                             words,
@@ -101,26 +105,29 @@ export function extractCitations(project: any): ChartData[] {
     // Extract citations from Reader agent runs
     const citationMap: Record<string, number> = {};
 
-    if (project.agentRuns) {
-        project.agentRuns.forEach((run: any) => {
-            if (run.agentName === 'reader' && run.status === 'completed' && run.output) {
-                try {
-                    const output = JSON.parse(run.output);
-                    if (output.citations && Array.isArray(output.citations)) {
-                        output.citations.forEach((cit: string) => {
-                            // Simple extraction of year or source
-                            // Assuming citation format like "Author (Year)" or similar
-                            const yearMatch = cit.match(/\b(19|20)\d{2}\b/);
-                            const key = yearMatch ? yearMatch[0] : 'Unknown';
-                            citationMap[key] = (citationMap[key] || 0) + 1;
-                        });
-                    }
-                } catch (e) {
-                    // ignore
-                }
-            }
-        });
+    // Add null/undefined checks
+    if (!project || !project.agentRuns || !Array.isArray(project.agentRuns)) {
+        return [];
     }
+
+    project.agentRuns.forEach((run: any) => {
+        if (run && run.agentName === 'reader' && run.status === 'completed' && run.output) {
+            try {
+                const output = JSON.parse(run.output);
+                if (output && output.citations && Array.isArray(output.citations)) {
+                    output.citations.forEach((cit: string) => {
+                        // Simple extraction of year or source
+                        // Assuming citation format like "Author (Year)" or similar
+                        const yearMatch = cit.match(/\b(19|20)\d{2}\b/);
+                        const key = yearMatch ? yearMatch[0] : 'Unknown';
+                        citationMap[key] = (citationMap[key] || 0) + 1;
+                    });
+                }
+            } catch (e) {
+                // ignore parse errors
+            }
+        }
+    });
 
     return Object.entries(citationMap)
         .map(([name, citations]) => ({ name, citations }))

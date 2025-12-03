@@ -31,14 +31,14 @@ interface ProjectDetailsViewProps {
 }
 
 export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetailsViewProps) {
+    if (!project) return null;
+
     const [activeTab, setActiveTab] = useState('overview');
 
     // Calculate real metrics from project data
     const qualityMetrics = useMemo(() => calculateProjectMetrics(project), [project]);
     const wordCountTrend = useMemo(() => calculateWordCountTrend(project), [project]);
     const citationData = useMemo(() => extractCitations(project), [project]);
-
-    if (!project) return null;
 
     // Get the latest outline and presentation from agentRuns
     const getLatestAgentOutput = (agentName: string) => {

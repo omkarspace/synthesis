@@ -1,11 +1,20 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const apiKey = process.env.GEMINI_API_KEY;
+
+if (!apiKey) {
+    console.warn('WARNING: GEMINI_API_KEY environment variable is not set');
+}
+
+const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
 
 export class GeminiClient {
     private model;
 
-    constructor(modelName: string = 'gemini-1.5-flash-001') {
+    constructor(modelName: string = 'gemini-2.5-flash') {
+        if (!genAI) {
+            throw new Error('Gemini API not initialized - missing GEMINI_API_KEY');
+        }
         this.model = genAI.getGenerativeModel({ model: modelName });
     }
 
@@ -13,7 +22,18 @@ export class GeminiClient {
         try {
             const result = await this.model.generateContent(prompt);
             const response = result.response;
-            return response.text();
+            
+            // Check if response is blocked
+            if (!response || !response.text) {
+                console.error('Gemini Response blocked or empty:', response);
+                throw new Error('API returned empty response');
+            }
+            
+            const text = response.text();
+            if (!text || text.length === 0) {
+                throw new Error('API returned empty text');
+            }
+            return text;
         } catch (error) {
             console.error('Gemini API Error:', error);
             throw new Error(`Failed to generate text: ${error}`);
@@ -26,7 +46,17 @@ export class GeminiClient {
                 prompt + '\n\nRespond ONLY with valid JSON, no markdown formatting.'
             );
             const response = result.response;
+            
+            // Check if response is blocked
+            if (!response || !response.text) {
+                console.error('Gemini JSON Response blocked or empty:', response);
+                throw new Error('API returned empty response');
+            }
+            
             const text = response.text();
+            if (!text || text.length === 0) {
+                throw new Error('API returned empty text');
+            }
 
             // Remove markdown code blocks if present
             const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
@@ -43,6 +73,7 @@ export class GeminiClient {
             try {
                 return await this.generateText(prompt);
             } catch (error) {
+                console.error(`Retry ${i + 1}/${maxRetries} failed:`, error);
                 if (i === maxRetries - 1) throw error;
                 await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
             }
@@ -56,7 +87,9 @@ export class GeminiClient {
 
             for await (const chunk of result.stream) {
                 const chunkText = chunk.text();
-                yield chunkText;
+                if (chunkText) {
+                    yield chunkText;
+                }
             }
         } catch (error) {
             console.error('Gemini Streaming Error:', error);

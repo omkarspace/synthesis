@@ -140,7 +140,12 @@ export function ConceptNetwork({ nodes }: ConceptNetworkProps) {
                     </div>
                     <div className="text-center p-3 bg-muted/30 rounded-lg">
                         <p className="text-2xl font-bold font-mono text-chart-3">
-                            {Math.round(nodes.reduce((sum, n) => sum + n.importance, 0) / nodes.length)}
+                            {(() => {
+                                if (!nodes || nodes.length === 0) return 0;
+                                const total = nodes.reduce((sum, n) => sum + (n?.importance || 0), 0);
+                                const avg = total / nodes.length;
+                                return Number.isFinite(avg) ? Math.round(avg) : 0;
+                            })()}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">Avg Importance</p>
                     </div>
