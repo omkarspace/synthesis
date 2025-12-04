@@ -79,20 +79,17 @@ export function RichTextEditor({ content, onSave, editable = true, className }: 
         extensions: [
             StarterKit,
             Underline,
-            TextStyle,
-            Color,
-            FontFamily.configure({
-                types: ['textStyle'],
-            }),
-            Highlight.configure({
-                multicolor: true,
-            }),
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
             }),
+            TextStyle,
+            Color,
+            FontFamily,
+            Highlight.configure({ multicolor: true }),
         ],
         content: content,
         editable: editable,
+        immediatelyRender: false,
         editorProps: {
             attributes: {
                 class: 'prose prose-sm max-w-none focus:outline-none min-h-[400px] p-4',
@@ -128,9 +125,10 @@ export function RichTextEditor({ content, onSave, editable = true, className }: 
     );
 
     return (
-        <div className={cn('border rounded-lg overflow-hidden', className)}>
+        <div className={cn('border rounded-lg overflow-hidden bg-background', className)}>
+            {/* Toolbar */}
             {editable && (
-                <div className="border-b bg-muted/30 p-2 flex items-center gap-1 flex-wrap">
+                <div className="border-b bg-muted/30 p-2 flex flex-wrap gap-1 overflow-x-auto">
                     {/* Text Style */}
                     <div className="flex gap-1 border-r pr-2">
                         <ToolbarButton
@@ -309,12 +307,12 @@ export function RichTextEditor({ content, onSave, editable = true, className }: 
                         </ToolbarButton>
                     </div>
 
-                    {/* Other */}
+                    {/* Blockquote & Code */}
                     <div className="flex gap-1 border-r pr-2">
                         <ToolbarButton
                             onClick={() => editor.chain().focus().toggleBlockquote().run()}
                             active={editor.isActive('blockquote')}
-                            title="Quote"
+                            title="Blockquote"
                         >
                             <Quote className="w-4 h-4" />
                         </ToolbarButton>
@@ -328,23 +326,24 @@ export function RichTextEditor({ content, onSave, editable = true, className }: 
                     </div>
 
                     {/* Undo/Redo */}
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 border-r pr-2">
                         <ToolbarButton
                             onClick={() => editor.chain().focus().undo().run()}
+                            active={false}
                             title="Undo (Ctrl+Z)"
                         >
                             <Undo className="w-4 h-4" />
                         </ToolbarButton>
                         <ToolbarButton
                             onClick={() => editor.chain().focus().redo().run()}
+                            active={false}
                             title="Redo (Ctrl+Y)"
                         >
                             <Redo className="w-4 h-4" />
                         </ToolbarButton>
                     </div>
 
-                    {/* Save Button */}
-                    <div className="flex-1" />
+                    {/* Save */}
                     {onSave && (
                         <Button
                             variant="default"
@@ -353,12 +352,14 @@ export function RichTextEditor({ content, onSave, editable = true, className }: 
                             className="gap-2"
                         >
                             <Save className="w-4 h-4" />
-                            Save Changes
+                            Save
                         </Button>
                     )}
                 </div>
             )}
-            <EditorContent editor={editor} className="bg-background" />
+
+            {/* Editor Content */}
+            <EditorContent editor={editor} />
         </div>
     );
 }

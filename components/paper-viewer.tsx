@@ -86,18 +86,24 @@ export const PaperViewer: React.FC<PaperViewerProps> = ({ paper, onDownload, onS
             </CardHeader>
             <CardContent>
                 {!isEditing && editable && (
-                    <div className="mb-4 p-4 bg-primary/5 border border-primary/20 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                        <div>
-                            <p className="font-semibold text-sm">Want to edit this paper?</p>
-                            <p className="text-xs text-muted-foreground">Use the rich text editor with formatting controls</p>
+                    <div className="mb-6 p-4 sm:p-6 bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary/30 rounded-xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-pulse-slow">
+                        <div className="flex items-start gap-3">
+                            <div className="p-2 bg-primary/20 rounded-lg">
+                                <Edit className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-base sm:text-lg text-foreground">✨ Rich Text Editor Available</p>
+                                <p className="text-xs sm:text-sm text-muted-foreground mt-1">Edit with fonts, colors, bold, italic, alignment & more</p>
+                            </div>
                         </div>
                         <Button
                             variant="default"
+                            size="lg"
                             onClick={() => setIsEditing(true)}
-                            className="gap-2 w-full sm:w-auto"
+                            className="gap-2 w-full sm:w-auto shadow-md hover:shadow-lg transition-all"
                         >
-                            <Edit className="w-4 h-4" />
-                            Start Editing
+                            <Edit className="w-5 h-5" />
+                            <span className="font-semibold">Start Editing</span>
                         </Button>
                     </div>
                 )}

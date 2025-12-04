@@ -98,7 +98,6 @@ export default function Home() {
   const handleBackToDashboard = () => {
     setDashboardView('list');
     setSelectedProjectId(null);
-    setSelectedProjectData(null);
   };
 
   // Dashboard Content
@@ -108,23 +107,23 @@ export default function Home() {
       {dashboardView === 'list' ? (
         <>
           {/* Header with Gradient */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-secondary/10 to-chart-3/10 p-8 border animate-fadeIn">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-secondary/10 to-chart-3/10 p-4 sm:p-8 border animate-fadeIn">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 rounded-full blur-3xl" />
             <div className="relative z-10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 mb-2">
-                  <Sparkles className="w-8 h-8 text-primary" />
-                  <h1 className="text-4xl font-serif font-bold text-foreground">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-primary flex-shrink-0" />
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-foreground break-words">
                     Dashboard
                   </h1>
                 </div>
-                <Button variant="outline" size="sm" onClick={refetch} className="gap-2">
+                <Button variant="outline" size="sm" onClick={refetch} className="gap-2 w-full sm:w-auto">
                   <RefreshCw className="w-4 h-4" />
-                  Refresh
+                  <span className="sm:inline">Refresh</span>
                 </Button>
               </div>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-muted-foreground text-sm sm:text-base lg:text-lg mt-2">
                 Manage your AI-powered research paper generation projects
               </p>
             </div>
@@ -230,17 +229,17 @@ export default function Home() {
   const ProjectsContent = () => (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-serif font-bold mb-2 flex items-center gap-3">
-            <FolderOpen className="w-10 h-10 text-primary" />
-            Projects
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold mb-2 flex items-center gap-2 sm:gap-3">
+            <FolderOpen className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-primary flex-shrink-0" />
+            <span className="break-words">Projects</span>
           </h1>
-          <p className="text-muted-foreground">Manage all your research paper projects</p>
+          <p className="text-muted-foreground text-sm sm:text-base">Manage all your research paper projects</p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2 w-full sm:w-auto">
           <Upload className="w-4 h-4" />
-          New Project
+          <span>New Project</span>
         </Button>
       </div>
 
@@ -329,27 +328,27 @@ export default function Home() {
               <Card key={project.id} className="hover-lift transition-smooth animate-slideIn cursor-pointer" style={{ animationDelay: `${index * 0.1}s` }} onClick={() => handleProjectClick(project.id)}>
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-semibold">{displayProject.title}</h3>
-                        <Badge variant={displayProject.status === 'completed' ? 'default' : displayProject.status === 'processing' ? 'secondary' : 'outline'}>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                        <h3 className="text-lg sm:text-xl font-semibold break-words">{displayProject.title}</h3>
+                        <Badge variant={displayProject.status === 'completed' ? 'default' : displayProject.status === 'processing' ? 'secondary' : 'outline'} className="w-fit">
                           {displayProject.status}
                         </Badge>
                       </div>
-                      <p className="text-muted-foreground mb-4">{displayProject.description}</p>
+                      <p className="text-muted-foreground mb-4 text-sm sm:text-base break-words">{displayProject.description}</p>
 
-                      <div className="grid grid-cols-3 gap-4 mb-4">
-                        <div className="flex items-center gap-2 text-sm">
-                          <Clock className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-mono">{displayProject.lastUpdated.toLocaleDateString()}</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 mb-4">
+                        <div className="flex items-center gap-2 text-xs sm:text-sm">
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                          <span className="font-mono truncate">{displayProject.lastUpdated.toLocaleDateString()}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <FolderOpen className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-mono">{displayProject.documentCount} documents</span>
+                        <div className="flex items-center gap-2 text-xs sm:text-sm">
+                          <FolderOpen className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                          <span className="font-mono truncate">{displayProject.documentCount} documents</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-mono">{displayProject.progress}% complete</span>
+                        <div className="flex items-center gap-2 text-xs sm:text-sm">
+                          <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                          <span className="font-mono truncate">{displayProject.progress}% complete</span>
                         </div>
                       </div>
 

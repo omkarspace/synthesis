@@ -95,21 +95,21 @@ export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetail
     return (
         <div className="space-y-8 animate-fadeIn">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" onClick={onBack} className="rounded-full hover:bg-muted">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-2 sm:gap-4 w-full sm:w-auto">
+                    <Button variant="ghost" size="icon" onClick={onBack} className="rounded-full hover:bg-muted flex-shrink-0">
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
-                    <div>
-                        <h1 className="text-3xl font-serif font-bold text-foreground">
+                    <div className="min-w-0 flex-1">
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-foreground break-words">
                             {project.name}
                         </h1>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground text-sm sm:text-base break-words">
                             {project.description || 'Research Project Analysis'}
                         </p>
                     </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap w-full sm:w-auto">
                     {paper && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -167,13 +167,13 @@ export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetail
 
             {/* Tabs for different views */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-6">
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="outline">Outline</TabsTrigger>
-                    <TabsTrigger value="paper">Paper</TabsTrigger>
-                    <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                    <TabsTrigger value="statistics">Statistics</TabsTrigger>
-                    <TabsTrigger value="chat">Ask Questions</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 gap-1">
+                    <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
+                    <TabsTrigger value="outline" className="text-xs sm:text-sm">Outline</TabsTrigger>
+                    <TabsTrigger value="paper" className="text-xs sm:text-sm">Paper</TabsTrigger>
+                    <TabsTrigger value="analytics" className="text-xs sm:text-sm">Analytics</TabsTrigger>
+                    <TabsTrigger value="statistics" className="text-xs sm:text-sm">Statistics</TabsTrigger>
+                    <TabsTrigger value="chat" className="text-xs sm:text-sm">Ask Questions</TabsTrigger>
                 </TabsList>
 
                 {/* Overview Tab */}
@@ -245,7 +245,23 @@ export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetail
                 {/* Paper Tab */}
                 <TabsContent value="paper">
                     {paper ? (
-                        <PaperViewer paper={paper} />
+                        <PaperViewer
+                            paper={paper}
+                            editable={true}
+                            onSave={async (content) => {
+                                // Save the edited paper content
+                                try {
+                                    await fetch(`/api/projects/${project.id}/paper`, {
+                                        method: 'PATCH',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ fullText: content })
+                                    });
+                                } catch (error) {
+                                    console.error('Failed to save paper:', error);
+                                    throw error;
+                                }
+                            }}
+                        />
                     ) : (
                         <div className="text-center py-12 text-muted-foreground">
                             <FileText className="w-16 h-16 mx-auto mb-4 opacity-50" />
