@@ -13,6 +13,9 @@ import { DocumentTypeChart } from '@/components/document-type-chart';
 import { FileUpload } from '@/components/file-upload';
 import { NewProjectDialog } from '@/components/new-project-dialog';
 import { ProjectDetailsView } from '@/components/project-details-view';
+import { AgentActivityFeed } from '@/components/agent-activity-feed';
+import { ProjectInsights } from '@/components/project-insights';
+import { AgentPerformanceMetrics } from '@/components/agent-performance-metrics';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -126,6 +129,14 @@ export default function Home() {
               </p>
             </div>
           </div>
+
+          {/* Enhanced Dashboard Widgets */}
+          {projects.length > 0 && (
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 animate-fadeIn" style={{ animationDelay: '0.15s' }}>
+              <AgentActivityFeed maxItems={10} />
+              <AgentPerformanceMetrics />
+            </div>
+          )}
 
           {/* Projects Grid */}
           <section className="animate-fadeIn" style={{ animationDelay: '0.2s' }}>
@@ -315,7 +326,7 @@ export default function Home() {
             };
 
             return (
-              <Card key={project.id} className="hover-lift transition-smooth animate-slideIn" style={{ animationDelay: `${index * 0.1}s` }}>
+              <Card key={project.id} className="hover-lift transition-smooth animate-slideIn cursor-pointer" style={{ animationDelay: `${index * 0.1}s` }} onClick={() => handleProjectClick(project.id)}>
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
@@ -346,10 +357,11 @@ export default function Home() {
                     </div>
 
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
                         <Download className="w-4 h-4" />
                       </Button>
-                      <Button variant="outline" size="sm" onClick={async () => {
+                      <Button variant="outline" size="sm" onClick={async (e) => {
+                        e.stopPropagation();
                         try {
                           await fetch(`/api/projects/${project.id}`, {
                             method: 'PATCH',
@@ -363,7 +375,8 @@ export default function Home() {
                       }}>
                         <Archive className="w-4 h-4" />
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => {
+                      <Button variant="outline" size="sm" onClick={(e) => {
+                        e.stopPropagation();
                         if (confirm('Are you sure you want to delete this project?')) {
                           fetch(`/api/projects/${project.id}`, { method: 'DELETE' })
                             .then(() => refetch());

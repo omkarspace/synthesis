@@ -50,12 +50,12 @@ export const PaperViewer: React.FC<PaperViewerProps> = ({ paper, onDownload, onS
     return (
         <Card className="animate-fadeIn">
             <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                         <FileText className="w-6 h-6 text-primary" />
                         <CardTitle className="text-2xl">{paper.title}</CardTitle>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                         {editable && (
                             <Button
                                 variant={isEditing ? "default" : "outline"}
@@ -85,6 +85,22 @@ export const PaperViewer: React.FC<PaperViewerProps> = ({ paper, onDownload, onS
                 </div>
             </CardHeader>
             <CardContent>
+                {!isEditing && editable && (
+                    <div className="mb-4 p-4 bg-primary/5 border border-primary/20 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div>
+                            <p className="font-semibold text-sm">Want to edit this paper?</p>
+                            <p className="text-xs text-muted-foreground">Use the rich text editor with formatting controls</p>
+                        </div>
+                        <Button
+                            variant="default"
+                            onClick={() => setIsEditing(true)}
+                            className="gap-2 w-full sm:w-auto"
+                        >
+                            <Edit className="w-4 h-4" />
+                            Start Editing
+                        </Button>
+                    </div>
+                )}
                 {isEditing ? (
                     <RichTextEditor
                         content={content}

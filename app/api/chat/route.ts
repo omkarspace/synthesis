@@ -65,8 +65,16 @@ Please provide a helpful, accurate answer based on the context above. If you ref
         // Debug: log the prompt sent to Gemini to help trace empty-context issues
         console.log('Chat prompt:', prompt);
 
+        // Check if we have meaningful context
+        const hasContext = context && !context.includes('PDF text extraction temporarily unavailable');
+
         // Generate response
-        const response = await geminiClient.generateText(prompt);
+        let response: string;
+        if (!hasContext) {
+            response = "I apologize, but I don't have access to the document content yet. The PDF text extraction is still processing. This could be due to:\n\n1. The document is still being processed\n2. PDF extraction encountered an issue\n3. No documents have been uploaded to this project yet\n\nPlease try:\n- Uploading the document again\n- Waiting a few moments for processing to complete\n- Checking if the document uploaded successfully\n\nOnce the document is processed, I'll be able to answer your questions about its content.";
+        } else {
+            response = await geminiClient.generateText(prompt);
+        }
 
         return NextResponse.json({
             response,

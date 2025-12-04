@@ -20,6 +20,7 @@ import { OutlineEditor } from '@/components/outline-editor';
 import { PaperViewer } from '@/components/paper-viewer';
 import { StatisticsViewer } from '@/components/statistics-viewer';
 import { ChatWithResearch } from '@/components/chat-with-research';
+import { ProjectInsights } from '@/components/project-insights';
 import { ArrowLeft, RefreshCw, Download, FileText, Presentation, FileDown, ChevronDown } from 'lucide-react';
 import { generateThemedPPT } from '@/lib/ppt-generator';
 import { calculateProjectMetrics, calculateWordCountTrend, extractCitations } from '@/lib/analytics-utils';
@@ -224,14 +225,21 @@ export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetail
 
                 {/* Outline Tab */}
                 <TabsContent value="outline">
-                    {outline ? (
-                        <OutlineEditor outline={outline} readOnly={true} />
-                    ) : (
-                        <div className="text-center py-12 text-muted-foreground">
-                            <FileText className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                            <p>Outline will appear here once the outliner agent completes.</p>
+                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                        <div className="xl:col-span-2">
+                            {outline ? (
+                                <OutlineEditor outline={outline} readOnly={true} />
+                            ) : (
+                                <div className="text-center py-12 text-muted-foreground">
+                                    <FileText className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                                    <p>Outline will appear here once the outliner agent completes.</p>
+                                </div>
+                            )}
                         </div>
-                    )}
+                        <div>
+                            <ProjectInsights projectId={project.id} />
+                        </div>
+                    </div>
                 </TabsContent>
 
                 {/* Paper Tab */}
