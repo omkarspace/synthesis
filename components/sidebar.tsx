@@ -69,7 +69,7 @@ export function Sidebar({ onNewProject, activeTab = 'dashboard', onTabChange }: 
         <div className="w-64 h-screen bg-sidebar border-r border-sidebar-border flex flex-col animate-slideIn">
             {/* Header */}
             <div className="p-6 border-b border-sidebar-border">
-                <h1 className="text-2xl font-serif font-bold text-sidebar-foreground">
+                <h1 className="text-2xl font-bold text-sidebar-foreground">
                     AI Research
                 </h1>
                 <p className="text-sm text-sidebar-foreground/60 mt-1">Paper Generator</p>

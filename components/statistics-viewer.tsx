@@ -19,7 +19,7 @@ interface StatisticsViewerProps {
     statistics: Statistic[];
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)', 'var(--primary)'];
 
 export function StatisticsViewer({ statistics }: StatisticsViewerProps) {
     if (!statistics || statistics.length === 0) {

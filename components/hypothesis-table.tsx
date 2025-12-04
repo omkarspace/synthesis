@@ -43,7 +43,7 @@ export function HypothesisTable({ hypotheses }: HypothesisTableProps) {
         return Array.from({ length: 5 }, (_, i) => (
             <Star
                 key={i}
-                className={`w-3.5 h-3.5 ${i < stars ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground/20'
+                className={`w-3.5 h-3.5 ${i < stars ? 'fill-chart-4 text-chart-4' : 'text-muted-foreground/20'
                     }`}
             />
         ));

@@ -3,9 +3,10 @@ import { prisma } from '@/lib/prisma';
 
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { projectId: string } }
+    props: { params: Promise<{ projectId: string }> }
 ) {
     try {
+        const params = await props.params;
         const { projectId } = params;
         const { fullText } = await request.json();
 

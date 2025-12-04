@@ -49,10 +49,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                         className={cn(
                             "pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-[300px] animate-slideIn transition-all",
                             "bg-background border",
-                            toast.type === 'success' && "border-green-500/50 bg-green-500/10 text-green-700 dark:text-green-300",
-                            toast.type === 'error' && "border-red-500/50 bg-red-500/10 text-red-700 dark:text-red-300",
-                            toast.type === 'warning' && "border-yellow-500/50 bg-yellow-500/10 text-yellow-700 dark:text-yellow-300",
-                            toast.type === 'info' && "border-blue-500/50 bg-blue-500/10 text-blue-700 dark:text-blue-300"
+                            toast.type === 'success' && "border-success/50 bg-success/10 text-success-foreground dark:text-success",
+                            toast.type === 'error' && "border-destructive/50 bg-destructive/10 text-destructive-foreground dark:text-destructive",
+                            toast.type === 'warning' && "border-warning/50 bg-warning/10 text-warning-foreground dark:text-warning",
+                            toast.type === 'info' && "border-info/50 bg-info/10 text-info-foreground dark:text-info"
                         )}
                     >
                         {toast.type === 'success' && <CheckCircle2 className="w-5 h-5 shrink-0" />}

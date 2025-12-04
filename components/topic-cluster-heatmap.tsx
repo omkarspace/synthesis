@@ -15,15 +15,16 @@ interface TopicClusterHeatmapProps {
     topics?: TopicData[];
 }
 
+// Using CSS custom properties for chart colors
 const COLORS = {
-    'Machine Learning': '#3B82F6',
-    'Healthcare': '#10B981',
-    'Ethics': '#8B5CF6',
-    'Data Science': '#F59E0B',
-    'AI Research': '#EF4444',
-    'Natural Language Processing': '#06B6D4',
-    'Computer Vision': '#EC4899',
-    'Other': '#6B7280',
+    'Machine Learning': 'var(--chart-1)',
+    'Healthcare': 'var(--chart-5)',
+    'Ethics': 'var(--chart-3)',
+    'Data Science': 'var(--chart-4)',
+    'AI Research': 'var(--destructive)',
+    'Natural Language Processing': 'var(--chart-2)',
+    'Computer Vision': 'var(--primary)',
+    'Other': 'var(--muted-foreground)',
 };
 
 const defaultTopics: TopicData[] = [
@@ -76,7 +77,7 @@ export const TopicClusterHeatmap: React.FC<TopicClusterHeatmapProps> = ({ topics
                             data={enrichedTopics}
                             dataKey="size"
                             aspectRatio={4 / 3}
-                            stroke="#fff"
+                            stroke="var(--background)"
                         >
                             <Tooltip content={<CustomTooltip />} />
                         </Treemap>

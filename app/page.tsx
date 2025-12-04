@@ -114,7 +114,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-2 sm:gap-3">
                   <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-primary flex-shrink-0" />
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-foreground break-words">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground break-words">
                     Dashboard
                   </h1>
                 </div>
@@ -139,7 +139,7 @@ export default function Home() {
 
           {/* Projects Grid */}
           <section className="animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-            <h2 className="text-2xl font-serif font-semibold mb-6 flex items-center gap-2">
+            <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
               <span className="w-1 h-8 bg-primary rounded-full" />
               Your Projects
             </h2>
@@ -231,7 +231,7 @@ export default function Home() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold mb-2 flex items-center gap-2 sm:gap-3">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-sans font-bold mb-2 flex items-center gap-2 sm:gap-3">
             <FolderOpen className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-primary flex-shrink-0" />
             <span className="break-words">Projects</span>
           </h1>
@@ -424,7 +424,7 @@ export default function Home() {
       <div className="space-y-6 animate-fadeIn">
         {/* Header */}
         <div>
-          <h1 className="text-4xl font-serif font-bold mb-2 flex items-center gap-3">
+          <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
             <BarChart3 className="w-10 h-10 text-primary" />
             Analytics
           </h1>
@@ -503,7 +503,7 @@ export default function Home() {
     <div className="space-y-6 animate-fadeIn max-w-4xl">
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-serif font-bold mb-2 flex items-center gap-3">
+        <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
           <SettingsIcon className="w-10 h-10 text-primary" />
           Settings
         </h1>
@@ -514,23 +514,31 @@ export default function Home() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="w-5 h-5" />
+            <User className="w-5 h-5 text-primary" />
             Profile
           </CardTitle>
           <CardDescription>Manage your account information</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium mb-2 block">Full Name</label>
-              <input type="text" placeholder="John Doe" className="w-full px-3 py-2 bg-background border rounded-lg" />
+              <label className="text-sm font-medium mb-2 block text-foreground">Full Name</label>
+              <input
+                type="text"
+                placeholder="John Doe"
+                className="w-full px-3 py-2.5 bg-background border border-input rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary placeholder:text-muted-foreground"
+              />
             </div>
             <div>
-              <label className="text-sm font-medium mb-2 block">Email</label>
-              <input type="email" placeholder="john@example.com" className="w-full px-3 py-2 bg-background border rounded-lg" />
+              <label className="text-sm font-medium mb-2 block text-foreground">Email</label>
+              <input
+                type="email"
+                placeholder="john@example.com"
+                className="w-full px-3 py-2.5 bg-background border border-input rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary placeholder:text-muted-foreground"
+              />
             </div>
           </div>
-          <Button>Save Changes</Button>
+          <Button className="mt-2">Save Changes</Button>
         </CardContent>
       </Card>
 
@@ -538,7 +546,7 @@ export default function Home() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Palette className="w-5 h-5" />
+            <Palette className="w-5 h-5 text-primary" />
             Appearance
           </CardTitle>
           <CardDescription>Customize the look and feel</CardDescription>
@@ -559,16 +567,19 @@ export default function Home() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Bell className="w-5 h-5" />
+            <Bell className="w-5 h-5 text-primary" />
             Notifications
           </CardTitle>
           <CardDescription>Configure notification preferences</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3">
           {['Project completion', 'Agent errors', 'Weekly summary'].map((item) => (
-            <div key={item} className="flex items-center justify-between">
-              <span className="text-sm">{item}</span>
-              <input type="checkbox" className="w-4 h-4" defaultChecked />
+            <div key={item} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-muted/50 transition-colors">
+              <span className="text-sm font-medium">{item}</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" defaultChecked />
+                <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-background after:border after:rounded-full after:h-5 after:w-5 after:transition-all after:shadow-sm peer-checked:bg-primary"></div>
+              </label>
             </div>
           ))}
         </CardContent>
@@ -578,25 +589,29 @@ export default function Home() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Globe className="w-5 h-5" />
+            <Globe className="w-5 h-5 text-primary" />
             API Configuration
           </CardTitle>
           <CardDescription>Configure AI model settings</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <label className="text-sm font-medium mb-2 block">API Provider</label>
-            <select className="w-full px-3 py-2 bg-background border rounded-lg">
+            <label className="text-sm font-medium mb-2 block text-foreground">API Provider</label>
+            <select className="w-full px-3 py-2.5 bg-background border border-input rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary cursor-pointer">
               <option>Gemini API</option>
               <option>OpenAI</option>
               <option>Anthropic</option>
             </select>
           </div>
           <div>
-            <label className="text-sm font-medium mb-2 block">API Key</label>
-            <input type="password" placeholder="••••••••••••••••" className="w-full px-3 py-2 bg-background border rounded-lg" />
+            <label className="text-sm font-medium mb-2 block text-foreground">API Key</label>
+            <input
+              type="password"
+              placeholder="••••••••••••••••"
+              className="w-full px-3 py-2.5 bg-background border border-input rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary placeholder:text-muted-foreground font-mono"
+            />
           </div>
-          <Button>Update API Settings</Button>
+          <Button className="mt-2">Update API Settings</Button>
         </CardContent>
       </Card>
 
@@ -604,7 +619,7 @@ export default function Home() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Lock className="w-5 h-5" />
+            <Lock className="w-5 h-5 text-primary" />
             Security
           </CardTitle>
           <CardDescription>Manage security settings</CardDescription>

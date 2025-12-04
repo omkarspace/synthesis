@@ -109,11 +109,11 @@ export function AgentActivityFeed({ projectId, maxItems = 50 }: AgentActivityFee
     const getActivityIcon = (type: AgentActivity['type']) => {
         switch (type) {
             case 'thought':
-                return <Brain className="w-4 h-4 text-purple-500" />;
+                return <Brain className="w-4 h-4 text-chart-3" />;
             case 'action':
-                return <Zap className="w-4 h-4 text-blue-500" />;
+                return <Zap className="w-4 h-4 text-chart-2" />;
             case 'observation':
-                return <MessageSquare className="w-4 h-4 text-green-500" />;
+                return <MessageSquare className="w-4 h-4 text-chart-5" />;
             case 'decision':
                 return <CheckCircle2 className="w-4 h-4 text-primary" />;
             case 'error':
@@ -124,11 +124,11 @@ export function AgentActivityFeed({ projectId, maxItems = 50 }: AgentActivityFee
     const getActivityColor = (type: AgentActivity['type']) => {
         switch (type) {
             case 'thought':
-                return 'bg-purple-500/10 border-purple-500/20';
+                return 'bg-chart-3/10 border-chart-3/20';
             case 'action':
-                return 'bg-blue-500/10 border-blue-500/20';
+                return 'bg-chart-2/10 border-chart-2/20';
             case 'observation':
-                return 'bg-green-500/10 border-green-500/20';
+                return 'bg-chart-5/10 border-chart-5/20';
             case 'decision':
                 return 'bg-primary/10 border-primary/20';
             case 'error':

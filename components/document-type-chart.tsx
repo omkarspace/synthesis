@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Label, Pie, PieChart } from 'recharts';
+import { Label, Pie, PieChart, ResponsiveContainer, Cell, Tooltip } from 'recharts';
 
 import {
     Card,
@@ -10,52 +10,27 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import {
-    ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from '@/components/ui/chart';
 
-export const description = 'A donut chart with text';
-
-const chartData = [
-    { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
-    { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
-    { browser: 'firefox', visitors: 287, fill: 'var(--color-firefox)' },
-    { browser: 'edge', visitors: 173, fill: 'var(--color-edge)' },
-    { browser: 'other', visitors: 190, fill: 'var(--color-other)' },
+// Warm orange/amber theme colors
+const CHART_COLORS = [
+    '#c2410c',   // Orange-700 (primary)
+    '#0d9488',   // Teal-600 (secondary)
+    '#f59e0b',   // Amber-500 (accent)
+    '#6b7280',   // Gray-500
+    '#8b5cf6',   // Violet-500
 ];
 
-const chartConfig = {
-    visitors: {
-        label: 'Visitors',
-    },
-    chrome: {
-        label: 'Chrome',
-        color: 'hsl(var(--chart-1))',
-    },
-    safari: {
-        label: 'Safari',
-        color: 'hsl(var(--chart-2))',
-    },
-    firefox: {
-        label: 'Firefox',
-        color: 'hsl(var(--chart-3))',
-    },
-    edge: {
-        label: 'Edge',
-        color: 'hsl(var(--chart-4))',
-    },
-    other: {
-        label: 'Other',
-        color: 'hsl(var(--chart-5))',
-    },
-} satisfies ChartConfig;
+const chartData = [
+    { type: 'PDFs', count: 275 },
+    { type: 'DOCX', count: 200 },
+    { type: 'Web', count: 287 },
+    { type: 'Papers', count: 173 },
+    { type: 'Other', count: 190 },
+];
 
 export function DocumentTypeChart() {
-    const totalVisitors = React.useMemo(() => {
-        return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
+    const totalDocuments = React.useMemo(() => {
+        return chartData.reduce((acc, curr) => acc + curr.count, 0);
     }, []);
 
     return (
@@ -65,54 +40,80 @@ export function DocumentTypeChart() {
                 <CardDescription>Distribution of source materials</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
-                <ChartContainer
-                    config={chartConfig}
-                    className="mx-auto aspect-square max-h-[250px]"
-                >
-                    <PieChart>
-                        <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
-                        />
-                        <Pie
-                            data={chartData}
-                            dataKey="visitors"
-                            nameKey="browser"
-                            innerRadius={60}
-                            strokeWidth={5}
-                        >
-                            <Label
-                                content={({ viewBox }) => {
-                                    if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                                        return (
-                                            <text
-                                                x={viewBox.cx}
-                                                y={viewBox.cy}
-                                                textAnchor="middle"
-                                                dominantBaseline="middle"
-                                            >
-                                                <tspan
+                <div className="mx-auto aspect-square max-h-[250px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: 'var(--popover)',
+                                    border: '1px solid var(--border)',
+                                    borderRadius: '8px',
+                                    boxShadow: 'var(--shadow-lg)'
+                                }}
+                                labelStyle={{ color: 'var(--foreground)', fontWeight: 600 }}
+                                itemStyle={{ color: 'var(--muted-foreground)' }}
+                            />
+                            <Pie
+                                data={chartData}
+                                dataKey="count"
+                                nameKey="type"
+                                innerRadius={60}
+                                outerRadius={90}
+                                strokeWidth={2}
+                                stroke="var(--background)"
+                            >
+                                {chartData.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={CHART_COLORS[index % CHART_COLORS.length]}
+                                    />
+                                ))}
+                                <Label
+                                    content={({ viewBox }) => {
+                                        if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+                                            return (
+                                                <text
                                                     x={viewBox.cx}
                                                     y={viewBox.cy}
-                                                    className="fill-foreground text-3xl font-bold"
+                                                    textAnchor="middle"
+                                                    dominantBaseline="middle"
                                                 >
-                                                    {totalVisitors.toLocaleString()}
-                                                </tspan>
-                                                <tspan
-                                                    x={viewBox.cx}
-                                                    y={(viewBox.cy || 0) + 24}
-                                                    className="fill-muted-foreground"
-                                                >
-                                                    Documents
-                                                </tspan>
-                                            </text>
-                                        );
-                                    }
-                                }}
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={viewBox.cy}
+                                                        className="fill-foreground text-3xl font-bold"
+                                                    >
+                                                        {totalDocuments.toLocaleString()}
+                                                    </tspan>
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={(viewBox.cy || 0) + 24}
+                                                        className="fill-muted-foreground text-sm"
+                                                    >
+                                                        Documents
+                                                    </tspan>
+                                                </text>
+                                            );
+                                        }
+                                    }}
+                                />
+                            </Pie>
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+
+                {/* Legend */}
+                <div className="flex flex-wrap justify-center gap-4 mt-4 pb-4">
+                    {chartData.map((entry, index) => (
+                        <div key={entry.type} className="flex items-center gap-2">
+                            <div
+                                className="w-3 h-3 rounded-sm"
+                                style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
                             />
-                        </Pie>
-                    </PieChart>
-                </ChartContainer>
+                            <span className="text-sm text-muted-foreground">{entry.type}</span>
+                        </div>
+                    ))}
+                </div>
             </CardContent>
         </Card>
     );

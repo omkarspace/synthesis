@@ -72,7 +72,7 @@ export function AgentPerformanceMetrics() {
     const getTrendIcon = (trend: AgentMetrics['trend']) => {
         switch (trend) {
             case 'up':
-                return <TrendingUp className="w-4 h-4 text-green-500" />;
+                return <TrendingUp className="w-4 h-4 text-chart-5" />;
             case 'down':
                 return <TrendingUp className="w-4 h-4 text-destructive rotate-180" />;
             case 'stable':
@@ -112,7 +112,7 @@ export function AgentPerformanceMetrics() {
                             <div className="grid grid-cols-2 gap-4 mb-4">
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                        <CheckCircle2 className="w-4 h-4 text-chart-5" />
                                         <span className="text-sm text-muted-foreground">Success Rate</span>
                                     </div>
                                     <div className="flex items-baseline gap-2">

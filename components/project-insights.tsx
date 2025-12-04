@@ -82,13 +82,13 @@ export function ProjectInsights({ projectId }: ProjectInsightsProps) {
             case 'quality':
                 return <Sparkles className="w-5 h-5 text-primary" />;
             case 'citation':
-                return <BookOpen className="w-5 h-5 text-blue-500" />;
+                return <BookOpen className="w-5 h-5 text-chart-2" />;
             case 'methodology':
-                return <Target className="w-5 h-5 text-purple-500" />;
+                return <Target className="w-5 h-5 text-chart-3" />;
             case 'direction':
-                return <TrendingUp className="w-5 h-5 text-green-500" />;
+                return <TrendingUp className="w-5 h-5 text-chart-5" />;
             case 'gap':
-                return <Lightbulb className="w-5 h-5 text-yellow-500" />;
+                return <Lightbulb className="w-5 h-5 text-chart-4" />;
         }
     };
 

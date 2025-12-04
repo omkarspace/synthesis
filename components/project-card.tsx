@@ -62,7 +62,7 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
             <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-4">
                     <div className="space-y-1.5">
-                        <CardTitle className="text-xl font-serif leading-tight group-hover:text-primary transition-colors">
+                        <CardTitle className="text-xl leading-tight group-hover:text-primary transition-colors">
                             {project.title}
                         </CardTitle>
                         <div className="flex flex-wrap gap-2">

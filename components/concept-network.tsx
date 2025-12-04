@@ -14,15 +14,17 @@ interface ConceptNetworkProps {
     nodes: ConceptNode[];
 }
 
+// Warm orange/amber theme colors
+const CLUSTER_COLORS = [
+    '#c2410c',   // Orange-700 (primary)
+    '#0d9488',   // Teal-600 (secondary)
+    '#f59e0b',   // Amber-500 (accent)
+    '#8b5cf6',   // Violet-500
+    '#6b7280',   // Gray-500
+];
+
 export function ConceptNetwork({ nodes }: ConceptNetworkProps) {
     const clusters = Array.from(new Set(nodes.map(n => n.cluster)));
-    const clusterColors = [
-        'bg-chart-1',
-        'bg-chart-2',
-        'bg-chart-3',
-        'bg-primary',
-        'bg-secondary',
-    ];
 
     const getNodeSize = (importance: number) => {
         if (importance > 80) return 'w-16 h-16 text-sm';
@@ -42,7 +44,10 @@ export function ConceptNetwork({ nodes }: ConceptNetworkProps) {
                 <div className="flex flex-wrap gap-2 mb-6">
                     {clusters.map((cluster, idx) => (
                         <Badge key={cluster} variant="outline" className="gap-2">
-                            <div className={`w-3 h-3 rounded-full ${clusterColors[idx % clusterColors.length]}`} />
+                            <div
+                                className="w-3 h-3 rounded-full"
+                                style={{ backgroundColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length] }}
+                            />
                             Cluster {cluster}
                         </Badge>
                     ))}
@@ -71,13 +76,15 @@ export function ConceptNetwork({ nodes }: ConceptNetworkProps) {
                                     >
                                         <div
                                             className={`
-                        ${getNodeSize(node.importance)}
-                        ${clusterColors[node.cluster % clusterColors.length]}
-                        rounded-full flex items-center justify-center
-                        font-semibold text-white shadow-lg
-                        hover:scale-110 transition-transform cursor-pointer
-                        hover:shadow-xl
-                      `}
+                                                ${getNodeSize(node.importance)}
+                                                rounded-full flex items-center justify-center
+                                                font-semibold text-white shadow-lg
+                                                hover:scale-110 transition-transform cursor-pointer
+                                                hover:shadow-xl
+                                            `}
+                                            style={{
+                                                backgroundColor: CLUSTER_COLORS[node.cluster % CLUSTER_COLORS.length]
+                                            }}
                                             title={`${node.label} (Importance: ${node.importance})`}
                                         >
                                             <span className="text-center px-1 truncate">
@@ -131,15 +138,19 @@ export function ConceptNetwork({ nodes }: ConceptNetworkProps) {
                 {/* Stats */}
                 <div className="grid grid-cols-3 gap-4 mt-6">
                     <div className="text-center p-3 bg-muted/30 rounded-lg">
-                        <p className="text-2xl font-bold font-mono text-primary">{nodes.length}</p>
+                        <p className="text-2xl font-bold font-mono" style={{ color: CLUSTER_COLORS[0] }}>
+                            {nodes.length}
+                        </p>
                         <p className="text-xs text-muted-foreground mt-1">Concepts</p>
                     </div>
                     <div className="text-center p-3 bg-muted/30 rounded-lg">
-                        <p className="text-2xl font-bold font-mono text-chart-2">{clusters.length}</p>
+                        <p className="text-2xl font-bold font-mono" style={{ color: CLUSTER_COLORS[1] }}>
+                            {clusters.length}
+                        </p>
                         <p className="text-xs text-muted-foreground mt-1">Clusters</p>
                     </div>
                     <div className="text-center p-3 bg-muted/30 rounded-lg">
-                        <p className="text-2xl font-bold font-mono text-chart-3">
+                        <p className="text-2xl font-bold font-mono" style={{ color: CLUSTER_COLORS[2] }}>
                             {(() => {
                                 if (!nodes || nodes.length === 0) return 0;
                                 const total = nodes.reduce((sum, n) => sum + (n?.importance || 0), 0);
