@@ -3,14 +3,11 @@
 import { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/sidebar';
 import { ProjectCard } from '@/components/project-card';
-import { AgentPipeline } from '@/components/agent-pipeline';
 import { QualityMetricsChart } from '@/components/quality-metrics-chart';
 import { CitationChart } from '@/components/citation-chart';
 import { WordCountTrend } from '@/components/word-count-trend';
 import { ConceptNetwork } from '@/components/concept-network';
-import { HypothesisTable } from '@/components/hypothesis-table';
 import { DocumentTypeChart } from '@/components/document-type-chart';
-import { FileUpload } from '@/components/file-upload';
 import { NewProjectDialog } from '@/components/new-project-dialog';
 import { ProjectDetailsView } from '@/components/project-details-view';
 import { AgentActivityFeed } from '@/components/agent-activity-feed';
@@ -38,7 +35,6 @@ import {
   Lock,
   Palette,
   Globe,
-  Zap,
   TrendingUp,
   Clock,
   CheckCircle2,
@@ -50,12 +46,24 @@ import {
 
 type TabType = 'dashboard' | 'projects' | 'analytics' | 'settings';
 
+interface Project {
+  id: string;
+  name: string;
+  description: string | null;
+  status: 'idle' | 'processing' | 'completed' | 'error';
+  progress: number;
+  updatedAt: string;
+  _count?: {
+    documents: number;
+  };
+}
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const { projects, loading, error, refetch } = useProjects();
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [selectedProjectData, setSelectedProjectData] = useState<any>(null);
+  const [selectedProjectData, setSelectedProjectData] = useState<Project | null>(null);
   const [dashboardView, setDashboardView] = useState<'list' | 'details'>('list');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -83,13 +91,6 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [selectedProjectId, selectedProjectData?.status]);
 
-  // Auto-select first project - REMOVED to show list first
-  // useEffect(() => {
-  //   if (projects.length > 0 && !selectedProjectId) {
-  //     setSelectedProjectId(projects[0].id);
-  //   }
-  // }, [projects, selectedProjectId]);
-
   const handleProjectClick = (projectId: string) => {
     setSelectedProjectId(projectId);
     setDashboardView('details');
@@ -98,6 +99,7 @@ export default function Home() {
   const handleBackToDashboard = () => {
     setDashboardView('list');
     setSelectedProjectId(null);
+    setSelectedProjectData(null);
   };
 
   // Dashboard Content
@@ -107,14 +109,14 @@ export default function Home() {
       {dashboardView === 'list' ? (
         <>
           {/* Header with Gradient */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-secondary/10 to-chart-3/10 p-4 sm:p-8 border animate-fadeIn">
+          <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-primary/10 via-secondary/10 to-chart-3/10 p-4 sm:p-8 border animate-fadeIn">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 rounded-full blur-3xl" />
             <div className="relative z-10">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-primary flex-shrink-0" />
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground break-words">
+                  <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0" />
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground wrap-break-word">
                     Dashboard
                   </h1>
                 </div>
@@ -188,7 +190,7 @@ export default function Home() {
                     id: project.id,
                     title: project.name,
                     description: project.description || '',
-                    status: project.status as any,
+                    status: project.status as 'idle' | 'processing' | 'completed' | 'error',
                     lastUpdated: new Date(project.updatedAt),
                     documentCount: project._count?.documents || 0,
                     progress: project.progress,
@@ -232,8 +234,8 @@ export default function Home() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-sans font-bold mb-2 flex items-center gap-2 sm:gap-3">
-            <FolderOpen className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-primary flex-shrink-0" />
-            <span className="break-words">Projects</span>
+            <FolderOpen className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-primary shrink-0" />
+            <span className="wrap-break-word">Projects</span>
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base">Manage all your research paper projects</p>
         </div>
@@ -313,12 +315,12 @@ export default function Home() {
             }
             return true;
           })
-          .map((project, index) => {
+            .map((project, index) => {
             const displayProject = {
               id: project.id,
               title: project.name,
               description: project.description || '',
-              status: project.status as any,
+              status: project.status as 'idle' | 'processing' | 'completed' | 'error',
               lastUpdated: new Date(project.updatedAt),
               documentCount: project._count?.documents || 0,
               progress: project.progress,
@@ -330,24 +332,24 @@ export default function Home() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
-                        <h3 className="text-lg sm:text-xl font-semibold break-words">{displayProject.title}</h3>
+                        <h3 className="text-lg sm:text-xl font-semibold wrap-break-word">{displayProject.title}</h3>
                         <Badge variant={displayProject.status === 'completed' ? 'default' : displayProject.status === 'processing' ? 'secondary' : 'outline'} className="w-fit">
                           {displayProject.status}
                         </Badge>
                       </div>
-                      <p className="text-muted-foreground mb-4 text-sm sm:text-base break-words">{displayProject.description}</p>
+                      <p className="text-muted-foreground mb-4 text-sm sm:text-base wrap-break-word">{displayProject.description}</p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 mb-4">
                         <div className="flex items-center gap-2 text-xs sm:text-sm">
-                          <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground shrink-0" />
                           <span className="font-mono truncate">{displayProject.lastUpdated.toLocaleDateString()}</span>
                         </div>
                         <div className="flex items-center gap-2 text-xs sm:text-sm">
-                          <FolderOpen className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                          <FolderOpen className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground shrink-0" />
                           <span className="font-mono truncate">{displayProject.documentCount} documents</span>
                         </div>
                         <div className="flex items-center gap-2 text-xs sm:text-sm">
-                          <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                          <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground shrink-0" />
                           <span className="font-mono truncate">{displayProject.progress}% complete</span>
                         </div>
                       </div>
@@ -578,7 +580,7 @@ export default function Home() {
               <span className="text-sm font-medium">{item}</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-background after:border after:rounded-full after:h-5 after:w-5 after:transition-all after:shadow-sm peer-checked:bg-primary"></div>
+                <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-background after:border after:rounded-full after:h-5 after:w-5 after:transition-all after:shadow-sm peer-checked:bg-primary"></div>
               </label>
             </div>
           ))}

@@ -17,7 +17,7 @@ export async function GET(
                 hypotheses: true,
                 conceptNodes: true,
                 statistics: true,
-            } as any,
+            },
         });
 
         if (!project) {
