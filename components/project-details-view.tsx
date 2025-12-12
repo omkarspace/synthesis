@@ -97,14 +97,14 @@ export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetail
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-2 sm:gap-4 w-full sm:w-auto">
-                    <Button variant="ghost" size="icon" onClick={onBack} className="rounded-full hover:bg-muted flex-shrink-0">
+                    <Button variant="ghost" size="icon" onClick={onBack} className="rounded-full hover:bg-muted shrink-0">
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
                     <div className="min-w-0 flex-1">
-                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-foreground break-words">
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-foreground wrap-break-word">
                             {project.name}
                         </h1>
-                        <p className="text-muted-foreground text-sm sm:text-base break-words">
+                        <p className="text-muted-foreground text-sm sm:text-base wrap-break-word">
                             {project.description || 'Research Project Analysis'}
                         </p>
                     </div>
@@ -293,4 +293,3 @@ export function ProjectDetailsView({ project, onBack, onRefresh }: ProjectDetail
         </div>
     );
 }
-

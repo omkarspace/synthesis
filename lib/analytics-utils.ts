@@ -15,6 +15,16 @@ export interface ChartData {
     [key: string]: any;
 }
 
+export interface CitationData {
+    name: string;
+    citations: number;
+}
+
+export interface WordCountData {
+    draft: string;
+    words: number;
+}
+
 export function calculateProjectMetrics(project: any): QualityMetrics {
     if (!project || !Array.isArray(project.hypotheses) || project.hypotheses.length === 0) {
         return {
@@ -47,14 +57,14 @@ export function calculateProjectMetrics(project: any): QualityMetrics {
     };
 }
 
-export function calculateWordCountTrend(project: any): ChartData[] {
+export function calculateWordCountTrend(project: any): WordCountData[] {
     if (!project || !Array.isArray(project.documents)) return [];
 
     // Group by date (simplified to just show documents as data points for now, or cumulative)
     // A better approach for a single project is to show growth over time based on document uploads
     // or agent generation steps.
 
-    // Let's try to extract word counts from agent runs if available (writer output), 
+    // Let's try to extract word counts from agent runs if available (writer output),
     // otherwise fallback to document estimates.
 
     const trend: ChartData[] = [];
@@ -98,10 +108,10 @@ export function calculateWordCountTrend(project: any): ChartData[] {
 
     // Sort by date
     return trend.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-        .map(({ name, words }) => ({ name, words }));
+        .map(({ name, words }) => ({ draft: name, words: words || 0 }));
 }
 
-export function extractCitations(project: any): ChartData[] {
+export function extractCitations(project: any): CitationData[] {
     // Extract citations from Reader agent runs
     const citationMap: Record<string, number> = {};
 
